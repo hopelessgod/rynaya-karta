@@ -243,6 +243,29 @@ input,select{font-family:inherit}
 @keyframes breathe{0%,100%{transform:translateY(-50%) scale(1)}50%{transform:translateY(-50%) scale(1.015)}}
 @keyframes wheelSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
+/* ── HAMBURGER BUTTON ── */
+.nav-burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;padding:6px;cursor:pointer;z-index:110}
+.nav-burger span{display:block;width:22px;height:1.5px;background:var(--gold-pale);transition:all .45s var(--ease);transform-origin:center}
+.nav-burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+/* ── MOBILE OVERLAY MENU ── */
+.mob-menu{position:fixed;inset:0;z-index:105;background:rgba(6,4,3,.97);backdrop-filter:blur(32px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;opacity:0;pointer-events:none;transition:opacity .45s var(--ease)}
+.mob-menu.open{opacity:1;pointer-events:all}
+.mob-menu-link{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,10vw,4rem);font-weight:300;font-style:italic;color:var(--stone);background:none;border:none;padding:14px 0;line-height:1;transition:color .3s,transform .4s var(--ease),opacity .4s var(--ease);transform:translateY(24px);opacity:0;cursor:pointer}
+.mob-menu.open .mob-menu-link{opacity:1;transform:translateY(0)}
+.mob-menu.open .mob-menu-link:nth-child(1){transition-delay:.06s}
+.mob-menu.open .mob-menu-link:nth-child(2){transition-delay:.11s}
+.mob-menu.open .mob-menu-link:nth-child(3){transition-delay:.16s}
+.mob-menu.open .mob-menu-link:nth-child(4){transition-delay:.21s}
+.mob-menu-link:hover{color:var(--smoke)}
+.mob-menu-divider{width:40px;height:1px;background:rgba(196,134,28,.2);margin:20px 0;opacity:0;transition:opacity .4s .28s var(--ease)}
+.mob-menu.open .mob-menu-divider{opacity:1}
+.mob-menu-cta{font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;color:var(--black);background:linear-gradient(135deg,var(--amber) 0%,#8c4a0a 100%);border:none;border-radius:60px;padding:16px 48px;transition:opacity .3s,transform .4s var(--ease);transform:translateY(24px);opacity:0;cursor:pointer;box-shadow:0 4px 32px rgba(196,134,28,.4)}
+.mob-menu.open .mob-menu-cta{opacity:1;transform:translateY(0);transition-delay:.28s}
+.mob-menu-cta:hover{opacity:.88}
+.mob-menu-label{font-family:'Cinzel',serif;font-size:8px;letter-spacing:4px;color:var(--ash);text-transform:uppercase;opacity:0;transition:opacity .4s .35s var(--ease);margin-top:12px}
+.mob-menu.open .mob-menu-label{opacity:1}
 /* ── RESPONSIVE ── */
 @media(max-width:1024px){
   .wheel-wrap{display:none}
@@ -250,16 +273,20 @@ input,select{font-family:inherit}
 }
 @media(max-width:768px){
   .hero-agaya{display:none}
-  .pkg-grid{grid-template-columns:1fr}
   .about-grid{grid-template-columns:1fr}
   .f-grid{grid-template-columns:1fr 1fr}
+  .nav{width:calc(100% - 36px);justify-content:space-between;gap:0}
   .nav-links{display:none}
-  .form-wrap{padding:36px 22px}
+  .cta-pill{display:none}
+  .nav-burger{display:flex}
 }
 @media(max-width:520px){
   .f-grid{grid-template-columns:1fr}
+  .f-row-2{grid-template-columns:1fr}
   .hero-content{padding:0 6vw}
   .sec{padding:80px 6vw}
+  .pkg-body{grid-template-columns:1fr}
+  .pkg-body-right{border-left:none;border-top:1px solid rgba(196,134,28,.1)}
 }
 /* ── PAGE ROUTING ── */
 .page-wrap{min-height:100vh;padding-top:80px}
@@ -838,6 +865,7 @@ export default function AgayaApp() {
   const [page, setPage] = useState('home');
   const [form, setForm] = useState({ dob: '', tob: '', city: '', email: '' });
   const [revealed, setRevealed] = useState(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   useReveal([page]);
 
   const navigate = (p) => {
@@ -852,10 +880,10 @@ export default function AgayaApp() {
   }, []);
 
   useEffect(() => {
-    if (modal) document.body.style.overflow = 'hidden';
+    if (modal || mobileOpen) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = '';
     return () => { document.body.style.overflow = ''; };
-  }, [modal]);
+  }, [modal, mobileOpen]);
 
   const scrollTo = id => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
@@ -871,10 +899,24 @@ export default function AgayaApp() {
       <div id="grain" />
       <RuneParticles />
 
+      {/* ─── MOBILE OVERLAY MENU ─── */}
+      <div className={`mob-menu ${mobileOpen ? 'open' : ''}`}>
+        {[['Пакеты', 'packages'], ['24 Руны', 'runes'], ['О Ривен', 'about'], ['FAQ', 'faq']].map(([l, id]) => (
+          <button key={id} className="mob-menu-link"
+            onClick={() => { navigate(id); setMobileOpen(false); }}>{l}</button>
+        ))}
+        <div className="mob-menu-divider" />
+        <button className="mob-menu-cta"
+          onClick={() => { navigate('home'); setMobileOpen(false); setTimeout(() => scrollTo('form'), 350); }}>
+          Получить руну
+        </button>
+        <span className="mob-menu-label">RIVEN · Рунная Карта</span>
+      </div>
+
       {/* ─── NAVBAR ─── */}
       <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
         <button className="nav-logo" style={{ background: 'none', border: 'none' }}
-          onClick={() => navigate('home')}>RIVEN</button>
+          onClick={() => { navigate('home'); setMobileOpen(false); }}>RIVEN</button>
         <ul className="nav-links">
           {[['Пакеты', 'packages'], ['24 Руны', 'runes'], ['О Ривен', 'about'], ['FAQ', 'faq']].map(([l, id]) => (
             <li key={id}>
@@ -885,6 +927,10 @@ export default function AgayaApp() {
         </ul>
         <button className="cta-pill" onClick={() => { navigate('home'); setTimeout(() => scrollTo('form'), 300); }}>
           <span>Получить руну</span>
+        </button>
+        <button className={`nav-burger ${mobileOpen ? 'open' : ''}`}
+          onClick={() => setMobileOpen(o => !o)} aria-label="Меню">
+          <span /><span /><span />
         </button>
       </nav>
 
