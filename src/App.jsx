@@ -296,7 +296,8 @@ input,select{font-family:inherit}
 .hero-right-mask{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(105deg,var(--black) 0%,rgba(6,4,3,.92) 18%,rgba(6,4,3,.55) 40%,rgba(6,4,3,.18) 62%,transparent 80%),linear-gradient(to bottom,rgba(6,4,3,.65) 0%,transparent 18%,transparent 58%,rgba(6,4,3,.97) 100%),radial-gradient(ellipse at 72% 50%,transparent 36%,rgba(6,4,3,.52) 84%)}
 /* ── WHEEL PANEL ── */
 .wheel-layout{display:flex;align-items:center;gap:40px;justify-content:center;flex-wrap:wrap}
-.wheel-svg-wrap{position:relative;flex-shrink:0}
+.wheel-svg-wrap{position:relative;flex-shrink:0;user-select:none;-webkit-user-select:none}
+.wheel-svg-wrap svg{user-select:none;-webkit-user-select:none}
 .wheel-arrow{position:absolute;top:6px;left:50%;transform:translateX(-50%);color:var(--amber);font-size:18px;z-index:10;line-height:1;filter:drop-shadow(0 0 8px rgba(196,134,28,.9));animation:pulse 2s ease-in-out infinite;pointer-events:none}
 .wheel-info{width:260px;flex-shrink:0;padding:36px 28px;background:rgba(12,9,5,.88);backdrop-filter:blur(16px);border:1px solid rgba(196,134,28,.2);border-radius:3px;min-height:300px;transition:all .4s var(--ease)}
 .wheel-info-sym{font-size:80px;color:var(--amber);display:block;line-height:1;margin-bottom:18px;text-shadow:0 0 50px rgba(196,134,28,.45);transition:all .4s}
